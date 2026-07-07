@@ -15,19 +15,19 @@ A production-grade ERP frontend for inventory and sales management, built featur
 | Real-time       | Socket.io-client               |
 | Unit tests      | Vitest + React Testing Library |
 | E2E tests       | Playwright                     |
-| Package manager | npm                            |
+| Package manager | pnpm                           |
 
 ## Prerequisites
 
 - Node.js 20+
-- npm 10+
+- pnpm 11+ (`npm i -g pnpm`)
 
 ## Setup
 
 ### 1. Install dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Configure environment variables
@@ -46,30 +46,30 @@ Open `.env` and set:
 ### 3. Install Playwright browser binaries (first time only)
 
 ```bash
-npx playwright install chromium
+pnpm exec playwright install chromium
 ```
 
 ## Scripts
 
-| Command              | Description                                   |
-| -------------------- | --------------------------------------------- |
-| `npm run dev`        | Start Vite dev server (http://localhost:5173) |
-| `npm run build`      | Type-check and build for production           |
-| `npm run preview`    | Preview the production build locally          |
-| `npm test`           | Run Vitest component/unit tests               |
-| `npm run test:watch` | Run Vitest in watch mode                      |
-| `npm run test:e2e`   | Run Playwright E2E tests                      |
-| `npm run lint`       | Run ESLint across all TypeScript files        |
-| `npm run lint:fix`   | Run ESLint and auto-fix fixable issues        |
-| `npm run format`     | Format all files with Prettier                |
-| `npm run typecheck`  | Run TypeScript compiler check without emit    |
+| Command               | Description                                   |
+| --------------------- | --------------------------------------------- |
+| `pnpm run dev`        | Start Vite dev server (http://localhost:5173) |
+| `pnpm run build`      | Type-check and build for production           |
+| `pnpm run preview`    | Preview the production build locally          |
+| `pnpm test`           | Run Vitest component/unit tests               |
+| `pnpm run test:watch` | Run Vitest in watch mode                      |
+| `pnpm run test:e2e`   | Run Playwright E2E tests                      |
+| `pnpm run lint`       | Run ESLint across all TypeScript files        |
+| `pnpm run lint:fix`   | Run ESLint and auto-fix fixable issues        |
+| `pnpm run format`     | Format all files with Prettier                |
+| `pnpm run typecheck`  | Run TypeScript compiler check without emit    |
 
 ## Git Hooks
 
 Husky hooks run automatically on git operations:
 
 - **pre-commit**: ESLint + Prettier on staged files (via lint-staged), then `tsc --noEmit`
-- **pre-push**: full `npm test` (component tests)
+- **pre-push**: full `pnpm test` (component tests)
 
 E2E tests run in CI on every push (see `.github/workflows/ci.yml`).
 

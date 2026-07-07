@@ -35,99 +35,107 @@ export function ProductTable({ products }: ProductTableProps) {
 
   return (
     <>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-16">Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>SKU</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead className="text-right">Purchase</TableHead>
-            <TableHead className="text-right">Selling</TableHead>
-            <TableHead className="text-right">Stock</TableHead>
-            {(canUpdate || canDelete) && <TableHead className="w-24">Actions</TableHead>}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {products.length === 0 && (
+      <div className="rounded-md border overflow-x-auto w-full">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
-                No products found.
-              </TableCell>
+              <TableHead className="w-16">Image</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>SKU</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead className="text-right">Purchase</TableHead>
+              <TableHead className="text-right">Selling</TableHead>
+              <TableHead className="text-right">Stock</TableHead>
+              {(canUpdate || canDelete) && <TableHead className="w-24">Actions</TableHead>}
             </TableRow>
-          )}
-          {products.map((product) => {
-            const isLowStock = product.stockQuantity < LOW_STOCK_THRESHOLD
-            return (
-              <TableRow
-                key={product._id}
-                className={`cursor-pointer hover:bg-muted/50 transition-colors ${
-                  isLowStock ? 'bg-amber-50 hover:bg-amber-100' : ''
-                }`}
-                onClick={() => canUpdate && navigate(`/products/${product._id}/edit`)}
-              >
-                <TableCell>
-                  {product.imageUrl ? (
-                    <img
-                      src={`${backendBase}${product.imageUrl}`}
-                      alt={product.name}
-                      className="h-10 w-10 rounded object-cover"
-                    />
-                  ) : (
-                    <div className="h-10 w-10 rounded bg-muted" />
-                  )}
+          </TableHeader>
+          <TableBody>
+            {products.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="py-10 text-center text-muted-foreground">
+                  No products found.
                 </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
-                <TableCell className="text-muted-foreground">{product.sku}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell className="text-right">${product.purchasePrice.toFixed(2)}</TableCell>
-                <TableCell className="text-right">${product.sellingPrice.toFixed(2)}</TableCell>
-                <TableCell className="text-right">
-                  {isLowStock ? (
-                    <Badge variant="destructive" data-testid="low-stock-badge">
-                      {product.stockQuantity} low
-                    </Badge>
-                  ) : (
-                    <span>{product.stockQuantity}</span>
-                  )}
-                </TableCell>
-                {(canUpdate || canDelete) && (
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {canUpdate && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={`Edit ${product.name}`}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            navigate(`/products/${product._id}/edit`)
-                          }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {canDelete && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={`Delete ${product.name}`}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setToDelete(product)
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                )}
               </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
+            )}
+            {products.map((product) => {
+              const isLowStock = product.stockQuantity < LOW_STOCK_THRESHOLD
+              return (
+                <TableRow
+                  key={product._id}
+                  className={`cursor-pointer hover:bg-muted/50 transition-colors ${
+                    isLowStock ? 'bg-amber-50 hover:bg-amber-100' : ''
+                  }`}
+                  onClick={() => canUpdate && navigate(`/products/${product._id}/edit`)}
+                >
+                  <TableCell>
+                    {product.imageUrl ? (
+                      <img
+                        src={`${backendBase}${product.imageUrl}`}
+                        alt={product.name}
+                        className="h-10 w-10 rounded object-cover"
+                      />
+                    ) : (
+                      <div className="h-10 w-10 rounded bg-muted" />
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium whitespace-nowrap">{product.name}</TableCell>
+                  <TableCell className="text-muted-foreground whitespace-nowrap">
+                    {product.sku}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap">{product.category}</TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    ${product.purchasePrice.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    ${product.sellingPrice.toFixed(2)}
+                  </TableCell>
+                  <TableCell className="text-right whitespace-nowrap">
+                    {isLowStock ? (
+                      <Badge variant="destructive" data-testid="low-stock-badge">
+                        {product.stockQuantity} low
+                      </Badge>
+                    ) : (
+                      <span>{product.stockQuantity}</span>
+                    )}
+                  </TableCell>
+                  {(canUpdate || canDelete) && (
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {canUpdate && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Edit ${product.name}`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              navigate(`/products/${product._id}/edit`)
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Delete ${product.name}`}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setToDelete(product)
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </div>
 
       <DeleteProductDialog product={toDelete} onClose={() => setToDelete(null)} />
     </>

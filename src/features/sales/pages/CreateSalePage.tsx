@@ -63,10 +63,10 @@ export default function CreateSalePage() {
   }
 
   return (
-    <main className="flex flex-col h-full">
+    <main className="flex flex-col min-h-full">
       <h1 className="mb-4 text-2xl font-semibold shrink-0">New Sale</h1>
 
-      <div className="grid gap-4 lg:grid-cols-[1fr_350px] flex-1 min-h-0">
+      <div className="grid gap-4 lg:grid-cols-[1fr_450px] flex-1 min-h-0">
         {/* Left Side: Product Selector */}
         <div className="flex flex-col min-h-[500px] bg-card rounded-md border p-3 shadow-sm overflow-hidden">
           <ProductSelector

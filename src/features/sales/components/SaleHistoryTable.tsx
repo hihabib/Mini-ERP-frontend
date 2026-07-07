@@ -36,14 +36,14 @@ export function SaleHistoryTable({ sales }: SaleHistoryTableProps) {
 
   return (
     <>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto w-full">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Items</TableHead>
-              <TableHead className="text-right">Grand Total</TableHead>
-              <TableHead>Sold By</TableHead>
+              <TableHead className="whitespace-nowrap">Date</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Items</TableHead>
+              <TableHead className="text-right whitespace-nowrap">Grand Total</TableHead>
+              <TableHead className="whitespace-nowrap">Sold By</TableHead>
               <TableHead className="w-[80px]"></TableHead>
             </TableRow>
           </TableHeader>
@@ -61,12 +61,14 @@ export function SaleHistoryTable({ sales }: SaleHistoryTableProps) {
                 className="cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => setSelectedSale(sale)}
               >
-                <TableCell>{new Date(sale.createdAt).toLocaleString()}</TableCell>
-                <TableCell className="text-right">{sale.items.length}</TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="whitespace-nowrap">
+                  {new Date(sale.createdAt).toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right whitespace-nowrap">{sale.items.length}</TableCell>
+                <TableCell className="text-right font-medium whitespace-nowrap">
                   ${sale.grandTotal.toFixed(2)}
                 </TableCell>
-                <TableCell>{soldByName(sale.soldBy)}</TableCell>
+                <TableCell className="whitespace-nowrap">{soldByName(sale.soldBy)}</TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
@@ -97,25 +99,31 @@ export function SaleHistoryTable({ sales }: SaleHistoryTableProps) {
           </DialogHeader>
           {selectedSale && (
             <div className="space-y-4 pt-4">
-              <div className="rounded-md border">
+              <div className="rounded-md border overflow-x-auto w-full">
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Product</TableHead>
-                      <TableHead className="text-right">Qty</TableHead>
-                      <TableHead className="text-right">Price</TableHead>
-                      <TableHead className="text-right">Subtotal</TableHead>
+                      <TableHead className="whitespace-nowrap">Product</TableHead>
+                      <TableHead className="text-right whitespace-nowrap">Qty</TableHead>
+                      <TableHead className="text-right whitespace-nowrap">Price</TableHead>
+                      <TableHead className="text-right whitespace-nowrap">Subtotal</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {selectedSale.items.map((item, idx) => (
                       <TableRow key={idx}>
-                        <TableCell className="font-medium">{item.productNameSnapshot}</TableCell>
-                        <TableCell className="text-right">{item.quantity}</TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="font-medium whitespace-nowrap">
+                          {item.productNameSnapshot}
+                        </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          {item.quantity}
+                        </TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
                           ${item.unitPriceSnapshot.toFixed(2)}
                         </TableCell>
-                        <TableCell className="text-right">${item.subtotal.toFixed(2)}</TableCell>
+                        <TableCell className="text-right whitespace-nowrap">
+                          ${item.subtotal.toFixed(2)}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

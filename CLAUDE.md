@@ -58,6 +58,12 @@ The Socket.io connection is initialized once via `src/lib/socket/socketClient.ts
 
 Build on Shadcn components in `src/components/ui/`. Do not duplicate one-off buttons, inputs, or modals across features.
 
+### 8. Mobile Responsiveness
+
+- All core views (Dashboard, POS, Products) must function properly on mobile widths.
+- Use `overflow-x-auto` wrapped around `<Table>` components to prevent layout breaking.
+- Use `min-h-full` rather than strict `h-full` on `flex-col` containers so elements can stack vertically and scroll naturally instead of squishing on mobile devices.
+
 ## Testing
 
 ### Test structure

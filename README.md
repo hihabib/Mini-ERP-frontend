@@ -1,104 +1,75 @@
 # Mini-ERP Frontend
 
-This repository contains the frontend client for the Mini-ERP (Inventory & Sales Management System). It provides a responsive, role-based dashboard for managing products, generating sales, and viewing real-time analytics.
+A modern, responsive, and highly interactive user interface for the Mini-ERP application. Built with React, Vite, Tailwind CSS, and Shadcn UI.
 
-## Tech Stack
+## Features
 
-- **Framework:** React 18 with Vite
-- **Language:** TypeScript
-- **Routing:** React Router v7
-- **Styling:** Tailwind CSS & Shadcn UI
-- **Server State Management:** TanStack Query (React Query)
-- **Client State Management:** Redux Toolkit (minimal usage, primarily for session/auth sync)
-- **Forms & Validation:** React Hook Form & Zod
-- **Real-Time Updates:** Socket.io-client
-- **Testing:** Vitest (Unit/Integration) & Playwright (E2E)
-- **Linting & Formatting:** ESLint & Prettier
+- **Dashboard**: Real-time statistics, recent sales activity, and low-stock alerts.
+- **Inventory Management**: Paginated product listings, advanced filtering, and product creation/editing forms with image uploads.
+- **Point of Sale (POS)**: A responsive interface to create sales with live subtotal calculations.
+- **Real-Time Sync**: Automatically reflects stock changes and new sales immediately across all tabs using WebSockets.
+- **Role-Based Access**: Dynamically renders UI elements and navigation based on user permissions.
+- **Responsive Design**: Fully functional and polished on both desktop and mobile devices.
 
-## Prerequisites
+## Technology Stack
 
-- Node.js (v18+)
-- `pnpm` package manager
-- **Running Backend API**: The frontend expects the backend server (and its MongoDB replica set) to be running. By default, it expects the API at `http://localhost:5000`.
+- **Framework**: React 18, Vite
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS, Shadcn UI
+- **State Management**: Redux Toolkit (Auth/Session) & React Query (Server State)
+- **Routing**: React Router v7
+- **Form Handling**: React Hook Form & Zod
+- **Testing**: Vitest (Unit) & Playwright (E2E)
 
-## Getting Started
+## Project Setup & Installation
 
-1. **Install dependencies:**
+### Prerequisites
+
+- Node.js (v22+)
+- pnpm (v11+)
+
+### Installation
+
+1. Install dependencies:
 
    ```bash
    pnpm install
    ```
 
-2. **Configure Environment Variables:**
-   Copy `.env.example` to `.env` (or create one) and set your API URL:
-
+2. Configure environment variables:
+   Create a `.env` file in the root of the project:
    ```env
-   VITE_API_URL=http://localhost:5000/api
+   VITE_API_BASE_URL=http://localhost:8000/api
+   VITE_SOCKET_URL=http://localhost:8000
    ```
+   _Note: Adjust these URLs if your backend is hosted remotely (e.g., `http://148.113.44.221:1500`)._
 
-3. **Start the Development Server:**
-   ```bash
-   pnpm run dev
-   ```
+### Running the Application
 
-## Available Scripts
+**Development Mode**:
 
-- `pnpm run dev`: Starts the Vite development server.
-- `pnpm run build`: Type-checks and builds the production bundle.
-- `pnpm run preview`: Previews the production build locally.
-- `pnpm run test`: Runs the Vitest unit & component test suite.
-- `pnpm run test:coverage`: Runs Vitest with coverage report generation.
-- `pnpm run test:e2e`: Runs the Playwright end-to-end tests.
-- `pnpm run lint`: Runs ESLint checks.
-- `pnpm run typecheck`: Runs TypeScript type checking.
-
-## Project Structure
-
-The frontend follows a feature-driven architecture.
-
-```
-src/
-├── components/       # Shared UI components (Shadcn components, layouts)
-├── features/         # Feature modules (auth, dashboard, products, sales)
-│   ├── auth/         # Login forms, session initializer, auth hooks
-│   ├── dashboard/    # Analytics views, stats, low stock lists
-│   ├── products/     # Product catalog, forms, and stock updates
-│   └── sales/        # POS interface, cart, sale history tables
-├── lib/              # Utilities, Axios instances, SocketProvider
-├── routes/           # React Router configuration and ProtectedRoutes
-├── store/            # Redux store (authSlice)
-└── tests/            # E2E Playwright tests and global setups
+```bash
+pnpm dev
 ```
 
-## Roles & Permissions
+**Production Build**:
 
-The UI is strictly role-gated based on permissions retrieved from the backend:
+```bash
+pnpm build
+pnpm preview
+```
 
-- **Admin**: Has full access. Can create/edit/delete products and view full sale history.
-- **Manager**: Can create/edit products but generally cannot delete them.
-- **Employee**: Can view products and create sales (POS), but cannot access the Sale History page or create new products.
+### Testing
 
-These permissions are checked dynamically via the `usePermission` hook, which conditionally renders UI elements like the "Add Product" button or specific navigation links.
+**Unit Tests**:
 
-## Real-Time Architecture
+```bash
+pnpm test
+pnpm test:coverage
+```
 
-The application maintains a long-lived WebSocket connection to the backend via `Socket.io`.
-When a sale occurs anywhere in the system, a `stock:updated` event is broadcast. The frontend intercepts this in the `useStockUpdates` hook and instantly patches the local TanStack Query cache. This ensures that all connected clients see live inventory reductions without needing to manually refresh or poll the server.
+**End-to-End Tests** (Playwright):
 
-## Testing
-
-We enforce a strict Test-Driven Development (TDD) cycle. The frontend uses `msw` (or `axios-mock-adapter`) for mocking network requests in Vitest.
-Coverage thresholds are strictly enforced:
-
-- Statements: 70%
-- Branches: 65%
-- Functions: 70%
-- Lines: 70%
-
-Run `pnpm run test` or `pnpm run test:coverage` to execute unit tests.
-Run `pnpm run test:e2e` to execute Playwright integration flows.
-
-## Known Limitations
-
-- The current deployment assumes a single monolithic backend URL.
-- Sale History is restricted to users with the `sale:view` permission (typically Admins/Managers).
+```bash
+pnpm test:e2e
+```

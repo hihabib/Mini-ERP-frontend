@@ -34,6 +34,14 @@ vi.mock('./hooks/useDashboardStats', () => ({
   useDashboardStats: vi.fn(),
 }))
 
+vi.mock('@/features/auth/hooks/usePermission', () => ({
+  usePermission: vi.fn(() => true),
+}))
+
+vi.mock('@/features/sales/hooks/useSaleList', () => ({
+  useSaleList: vi.fn(() => ({ data: { sales: [] }, isLoading: false, isError: false })),
+}))
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function makeClient() {

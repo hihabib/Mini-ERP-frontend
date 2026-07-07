@@ -4,57 +4,81 @@ A production-grade ERP frontend for inventory and sales management, built featur
 
 ## Tech Stack
 
-| Concern | Library |
-|---|---|
-| Framework | React 18 + Vite |
-| Language | TypeScript (strict) |
-| Routing | React Router v7 |
-| Styling | Tailwind CSS + Shadcn/ui |
-| Server state | TanStack Query v5 |
-| Client/UI state | Redux Toolkit |
-| Real-time | Socket.io-client |
-| Unit tests | Vitest + React Testing Library |
-| E2E tests | Playwright |
-| Package manager | pnpm |
+| Concern         | Library                        |
+| --------------- | ------------------------------ |
+| Framework       | React 18 + Vite                |
+| Language        | TypeScript (strict)            |
+| Routing         | React Router v7                |
+| Styling         | Tailwind CSS + Shadcn/ui       |
+| Server state    | TanStack Query v5              |
+| Client/UI state | Redux Toolkit                  |
+| Real-time       | Socket.io-client               |
+| Unit tests      | Vitest + React Testing Library |
+| E2E tests       | Playwright                     |
+| Package manager | npm                            |
 
-## Getting Started
+## Prerequisites
 
-### Prerequisites
+- Node.js 20+
+- npm 10+
 
-- Node.js 18+
-- pnpm 9+
+## Setup
 
-### Setup
+### 1. Install dependencies
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Copy environment variables
-cp .env.example .env
-# Edit .env and set VITE_API_BASE_URL and VITE_SOCKET_URL
-
-# Start the dev server
-pnpm run dev
+npm install
 ```
 
-The app runs at `http://localhost:5173`.
+### 2. Configure environment variables
+
+```bash
+cp .env.example .env
+```
+
+Open `.env` and set:
+
+| Variable            | Description          | Example                     |
+| ------------------- | -------------------- | --------------------------- |
+| `VITE_API_BASE_URL` | REST API base URL    | `http://localhost:5000/api` |
+| `VITE_SOCKET_URL`   | Socket.io server URL | `http://localhost:5000`     |
+
+### 3. Install Playwright browser binaries (first time only)
+
+```bash
+npx playwright install chromium
+```
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `pnpm run dev` | Start Vite dev server |
-| `pnpm run build` | Type-check and build for production |
-| `pnpm run preview` | Preview the production build |
-| `pnpm test` | Run Vitest unit/component tests |
-| `pnpm test:watch` | Run Vitest in watch mode |
-| `pnpm test:e2e` | Run Playwright E2E tests |
+| Command              | Description                                   |
+| -------------------- | --------------------------------------------- |
+| `npm run dev`        | Start Vite dev server (http://localhost:5173) |
+| `npm run build`      | Type-check and build for production           |
+| `npm run preview`    | Preview the production build locally          |
+| `npm test`           | Run Vitest component/unit tests               |
+| `npm run test:watch` | Run Vitest in watch mode                      |
+| `npm run test:e2e`   | Run Playwright E2E tests                      |
+| `npm run lint`       | Run ESLint across all TypeScript files        |
+| `npm run lint:fix`   | Run ESLint and auto-fix fixable issues        |
+| `npm run format`     | Format all files with Prettier                |
+| `npm run typecheck`  | Run TypeScript compiler check without emit    |
+
+## Git Hooks
+
+Husky hooks run automatically on git operations:
+
+- **pre-commit**: ESLint + Prettier on staged files (via lint-staged), then `tsc --noEmit`
+- **pre-push**: full `npm test` (component tests)
+
+E2E tests run in CI on every push (see `.github/workflows/ci.yml`).
 
 ## Project Structure
 
 ```
 src/
+├── config/
+│   └── env.ts                # Typed, validated env variables — import from here
 ├── main.tsx                  # Entry point
 ├── App.tsx                   # Router + providers
 ├── routes/
@@ -85,13 +109,7 @@ tests/
 
 - **Feature-based modules** — each feature owns its components, hooks, API calls, and types.
 - **API layer isolation** — all HTTP calls go through `src/lib/api/axiosClient.ts`. Components never call Axios directly.
-- **Server vs. client state** — TanStack Query owns anything fetched from the backend; Redux owns purely UI state (modal open/close, form step, etc.).
-- **Single Socket connection** — initialized once via `socketClient.ts`; any feature subscribes to events through hooks without re-connecting.
+- **Env isolation** — all `import.meta.env` reads go through `src/config/env.ts`. Other files never access `import.meta.env`.
+- **Server vs. client state** — TanStack Query owns fetched data; Redux owns purely UI state (modals, tabs, form steps).
+- **Single Socket connection** — initialized once via `socketClient.ts`; features subscribe through hooks.
 - **Centralized auth guard** — `ProtectedRoute` is the single place that checks authentication and redirects.
-
-## Environment Variables
-
-| Variable | Description |
-|---|---|
-| `VITE_API_BASE_URL` | Base URL for the REST API (e.g. `http://localhost:3000/api`) |
-| `VITE_SOCKET_URL` | Socket.io server URL (e.g. `http://localhost:3000`) |

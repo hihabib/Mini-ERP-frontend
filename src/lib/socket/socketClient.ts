@@ -1,10 +1,12 @@
-import { io, Socket } from 'socket.io-client'
+import { io, type Socket } from 'socket.io-client'
+
+import { env } from '@/config/env'
 
 let socket: Socket | null = null
 
 export function getSocket(): Socket {
   if (!socket) {
-    socket = io(import.meta.env.VITE_SOCKET_URL as string, {
+    socket = io(env.socketUrl, {
       autoConnect: false,
       withCredentials: true,
     })

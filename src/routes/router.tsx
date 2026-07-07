@@ -1,9 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom'
-import ProtectedRoute from './ProtectedRoute'
+
 import LoginPage from '@/features/auth/components/LoginPage'
 import DashboardPage from '@/features/dashboard/components/DashboardPage'
 import ProductsPage from '@/features/products/components/ProductsPage'
 import SalesPage from '@/features/sales/components/SalesPage'
+
+import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -12,19 +14,35 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <ProtectedRoute><DashboardPage /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/dashboard',
-    element: <ProtectedRoute><DashboardPage /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/products',
-    element: <ProtectedRoute><ProductsPage /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <ProductsPage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/sales',
-    element: <ProtectedRoute><SalesPage /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <SalesPage />
+      </ProtectedRoute>
+    ),
   },
 ])
 

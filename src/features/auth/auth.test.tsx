@@ -36,13 +36,14 @@ function makeQueryClient() {
   return new QueryClient({ defaultOptions: { queries: { retry: false } } })
 }
 
-function renderLoginForm(initialPath = '/') {
+function renderLoginForm(initialPath = '/login') {
   return render(
     <ReduxProvider store={makeStore()}>
       <QueryClientProvider client={makeQueryClient()}>
         <MemoryRouter initialEntries={[initialPath]}>
           <Routes>
-            <Route path="/" element={<LoginForm />} />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/" element={<div>Home</div>} />
             <Route path="/dashboard" element={<div>Dashboard</div>} />
           </Routes>
         </MemoryRouter>
@@ -91,7 +92,7 @@ describe('LoginForm', () => {
     expect(screen.getByText('Password is required')).toBeInTheDocument()
   })
 
-  it('calls the login API with credentials and navigates to /dashboard on success', async () => {
+  it('calls the login API with credentials and navigates home on success', async () => {
     vi.mocked(authApi.login).mockResolvedValue({ accessToken: 'test-token' })
     renderLoginForm()
 
@@ -102,7 +103,7 @@ describe('LoginForm', () => {
     await waitFor(() => {
       expect(authApi.login).toHaveBeenCalledWith('admin@example.com', 'password123')
     })
-    expect(await screen.findByText('Dashboard')).toBeInTheDocument()
+    expect(await screen.findByText('Home')).toBeInTheDocument()
   })
 
   it('shows an API error message on login failure', async () => {

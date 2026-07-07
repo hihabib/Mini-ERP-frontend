@@ -10,6 +10,7 @@ import CreateSalePage from '@/features/sales/pages/CreateSalePage'
 import SaleHistoryPage from '@/features/sales/pages/SaleHistoryPage'
 import { UsersPage } from '@/features/users/pages/UsersPage'
 
+import HomeRedirect from './HomeRedirect'
 import ProtectedRoute from './ProtectedRoute'
 
 const router = createBrowserRouter([
@@ -29,8 +30,8 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <ProtectedRoute requiredPermission="dashboard:view">
-            <DashboardPage />
+          <ProtectedRoute>
+            <HomeRedirect />
           </ProtectedRoute>
         ),
       },

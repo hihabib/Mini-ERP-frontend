@@ -39,8 +39,11 @@ export function AppLayout() {
       path: '/sales',
       icon: ShoppingCart,
       show: true,
-      exact: true,
-      children: [{ name: 'Sale History', path: '/sales/history', show: canViewSales }],
+      exact: false,
+      children: [
+        { name: 'Sell', path: '/sales', show: true, exact: true },
+        { name: 'Sale History', path: '/sales/history', show: canViewSales, exact: true },
+      ],
     },
   ].filter((item) => item.show)
 
@@ -113,6 +116,7 @@ export function AppLayout() {
                         <NavLink
                           key={child.path}
                           to={child.path}
+                          end={child.exact}
                           onClick={() => setSidebarOpen(false)}
                           className={({ isActive }) =>
                             cn(

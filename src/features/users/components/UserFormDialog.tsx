@@ -2,6 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 import { UserForm } from './UserForm'
 
+import type { UserFormValues } from './UserForm'
 import type { User, CreateUserPayload, UpdateUserPayload } from '../types'
 
 interface UserFormDialogProps {
@@ -23,7 +24,7 @@ export function UserFormDialog({
 }: UserFormDialogProps) {
   const isCreate = !user
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: UserFormValues) => {
     if (isCreate && onSubmitCreate) {
       await onSubmitCreate(data)
     } else if (onSubmitUpdate) {

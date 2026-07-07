@@ -24,7 +24,7 @@ const userSchema = z.object({
   isActive: z.boolean().optional(),
 })
 
-type UserFormValues = z.infer<typeof userSchema>
+export type UserFormValues = z.infer<typeof userSchema>
 
 interface UserFormProps {
   defaultValues?: Partial<UserFormValues>

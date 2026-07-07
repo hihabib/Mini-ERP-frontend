@@ -5,7 +5,7 @@ module.exports = {
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
+    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.vitest.json'],
     tsconfigRootDir: __dirname,
   },
   plugins: [
@@ -27,7 +27,7 @@ module.exports = {
     react: { version: 'detect' },
     'import/resolver': {
       typescript: {
-        project: ['./tsconfig.json', './tsconfig.node.json'],
+        project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.vitest.json'],
       },
     },
   },

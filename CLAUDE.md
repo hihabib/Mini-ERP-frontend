@@ -58,14 +58,38 @@ The Socket.io connection is initialized once via `src/lib/socket/socketClient.ts
 
 Build on Shadcn components in `src/components/ui/`. Do not duplicate one-off buttons, inputs, or modals across features.
 
+## Testing
+
+### Test structure
+
+Follow the standard template in `docs/testing/frontend-feature-test-template.md` for every new feature test file. Say "follow the standard feature test template" in prompts rather than re-explaining the structure.
+
+Every component with logic needs:
+
+- A negative permission test (UI element is **absent** for an unauthorized role)
+- An error-path test for every mutation (API rejection shows correct UI)
+- A socket-state-change test for any real-time hook (proves the event changes cache/UI, not just that a handler was registered)
+
+### Coverage thresholds (enforced by CI via `pnpm test:coverage`)
+
+| Metric     | Minimum |
+| ---------- | ------- |
+| Statements | 70%     |
+| Branches   | 65%     |
+| Functions  | 70%     |
+| Lines      | 70%     |
+
+Excluded from thresholds: `src/main.tsx`, `src/App.tsx`, `src/components/ui/**` (Shadcn primitives), `src/routes/router.tsx` (declarative config), `src/types/**` (pure TS declarations).
+
 ## Definition of Done
 
 A feature is **not complete** until all of the following are true:
 
-- [ ] `npm run lint` passes with zero errors
-- [ ] `npm run typecheck` passes with zero errors
-- [ ] Component tests pass (`npm test`) — required wherever the component has logic
-- [ ] Relevant E2E spec passes or is added (`npm run test:e2e`) — required for every major user flow
+- [ ] `pnpm lint` passes with zero errors
+- [ ] `pnpm typecheck` passes with zero errors
+- [ ] Component tests pass (`pnpm test`) — required wherever the component has logic
+- [ ] `pnpm test:coverage` passes with all thresholds met
+- [ ] Relevant E2E spec passes or is added (`pnpm test:e2e`) — required for every major user flow
 - [ ] `README.md` updated if setup steps or env variables changed
 
 ## AI Tooling

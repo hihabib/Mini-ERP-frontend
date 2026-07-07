@@ -1,4 +1,4 @@
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, Outlet } from 'react-router-dom'
 
 import { useAuth } from '@/features/auth/hooks/useAuth'
 import { usePermission } from '@/features/auth/hooks/usePermission'
@@ -6,7 +6,7 @@ import { usePermission } from '@/features/auth/hooks/usePermission'
 import type { ReactNode } from 'react'
 
 interface ProtectedRouteProps {
-  children: ReactNode
+  children?: ReactNode
   requiredPermission?: string
 }
 
@@ -36,5 +36,5 @@ export default function ProtectedRoute({ children, requiredPermission }: Protect
     )
   }
 
-  return <>{children}</>
+  return children ? <>{children}</> : <Outlet />
 }

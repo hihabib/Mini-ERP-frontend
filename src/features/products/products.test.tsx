@@ -6,7 +6,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { usePermission } from '@/features/auth/hooks/usePermission'
 
+import { DeleteProductDialog } from './components/DeleteProductDialog'
 import { ProductForm } from './components/ProductForm'
+import { ProductPagination } from './components/ProductPagination'
 import { ProductSearchBar } from './components/ProductSearchBar'
 import { ProductTable } from './components/ProductTable'
 
@@ -15,6 +17,9 @@ import type { Product } from '@/types/product.types'
 vi.mock('@/features/auth/hooks/usePermission', () => ({ usePermission: vi.fn() }))
 vi.mock('@/config/env', () => ({
   env: { apiBaseUrl: 'http://localhost:8000/api', socketUrl: 'http://localhost:8000' },
+}))
+vi.mock('./hooks/useDeleteProduct', () => ({
+  useDeleteProduct: vi.fn(() => ({ mutate: vi.fn(), isPending: false })),
 }))
 
 const mockUsePermission = vi.mocked(usePermission)
@@ -136,5 +141,92 @@ describe('ProductSearchBar', () => {
     })
 
     await waitFor(() => expect(onChange).toHaveBeenCalledWith('wid'), { timeout: 500 })
+  })
+})
+
+// ─── ProductTable: empty state ────────────────────────────────────────────────
+
+describe('ProductTable — empty state', () => {
+  it('shows "No products found." when the product list is empty', () => {
+    vi.mocked(usePermission).mockReturnValue(false)
+    render(<ProductTable products={[]} />, { wrapper })
+    expect(screen.getByText(/no products found/i)).toBeInTheDocument()
+  })
+
+  it('renders a placeholder div when the product has no image', () => {
+    vi.mocked(usePermission).mockReturnValue(false)
+    render(<ProductTable products={[stubProduct({ imageUrl: '' })]} />, { wrapper })
+    // Expect no <img> element rendered for this product row
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
+  })
+})
+
+// ─── ProductPagination ────────────────────────────────────────────────────────
+
+describe('ProductPagination', () => {
+  it('renders nothing when total items fit on a single page', () => {
+    const { container } = render(
+      <ProductPagination page={1} limit={10} total={8} onPageChange={vi.fn()} />,
+    )
+    expect(container).toBeEmptyDOMElement()
+  })
+
+  it('renders page info when there are multiple pages', () => {
+    render(<ProductPagination page={2} limit={10} total={25} onPageChange={vi.fn()} />)
+    expect(screen.getByText(/11–20 of 25/)).toBeInTheDocument()
+    expect(screen.getByText('2 / 3')).toBeInTheDocument()
+  })
+
+  it('calls onPageChange with decremented page when Previous is clicked', async () => {
+    const user = userEvent.setup()
+    const onPageChange = vi.fn()
+    render(<ProductPagination page={2} limit={10} total={25} onPageChange={onPageChange} />)
+
+    await user.click(screen.getByRole('button', { name: /previous page/i }))
+
+    expect(onPageChange).toHaveBeenCalledWith(1)
+  })
+
+  it('calls onPageChange with incremented page when Next is clicked', async () => {
+    const user = userEvent.setup()
+    const onPageChange = vi.fn()
+    render(<ProductPagination page={1} limit={10} total={25} onPageChange={onPageChange} />)
+
+    await user.click(screen.getByRole('button', { name: /next page/i }))
+
+    expect(onPageChange).toHaveBeenCalledWith(2)
+  })
+})
+
+// ─── DeleteProductDialog ──────────────────────────────────────────────────────
+
+describe('DeleteProductDialog', () => {
+  it('does not render dialog content when product is null', () => {
+    render(<DeleteProductDialog product={null} onClose={vi.fn()} />, { wrapper })
+    expect(screen.queryByText(/delete product\?/i)).not.toBeInTheDocument()
+  })
+
+  it('shows the product name and action buttons when open', () => {
+    render(<DeleteProductDialog product={stubProduct()} onClose={vi.fn()} />, { wrapper })
+    expect(screen.getByText(/delete product\?/i)).toBeInTheDocument()
+    expect(screen.getByText('Widget A')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /^delete$/i })).toBeInTheDocument()
+  })
+
+  it('calls mutate with the product id when Delete is confirmed', async () => {
+    const { useDeleteProduct } = await import('./hooks/useDeleteProduct')
+    const mutate = vi.fn()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(useDeleteProduct).mockReturnValue({ mutate, isPending: false } as any)
+
+    const user = userEvent.setup()
+    render(<DeleteProductDialog product={stubProduct()} onClose={vi.fn()} />, { wrapper })
+
+    await user.click(screen.getByRole('button', { name: /^delete$/i }))
+
+    expect(mutate).toHaveBeenCalledWith(
+      'p1',
+      expect.objectContaining({ onSuccess: expect.any(Function) }),
+    )
   })
 })

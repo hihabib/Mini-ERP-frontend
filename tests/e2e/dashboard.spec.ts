@@ -113,10 +113,10 @@ test.describe('Dashboard — Admin', () => {
 
     await page.goto('/dashboard')
     await expect(page.getByTestId('low-stock-count-badge')).toBeVisible({ timeout: 8_000 })
-    await expect(page.getByTestId('low-stock-count-badge')).toHaveText('5 products low on stock')
+    await expect(page.getByTestId('low-stock-count-badge')).toHaveText('5 Issues')
     await expect(page.getByTestId('low-stock-item-ls1')).toBeVisible()
     await expect(page.getByTestId('low-stock-item-ls2')).toBeVisible()
-    await expect(page.getByText(/…and 3 more/)).toBeVisible()
+    await expect(page.getByText(/\+3 more products running low/)).toBeVisible()
   })
 
   test('stats refresh after a sale — dashboard auto-refetches on navigation', async ({ page }) => {

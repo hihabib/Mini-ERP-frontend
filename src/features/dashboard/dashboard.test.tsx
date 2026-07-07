@@ -6,6 +6,8 @@ import { LowStockList } from './components/LowStockList'
 import { StatCard } from './components/StatCard'
 import { StatsGrid } from './components/StatsGrid'
 import { useDashboardInvalidation } from './hooks/useDashboardInvalidation'
+import { useDashboardStats } from './hooks/useDashboardStats'
+import DashboardPage from './pages/DashboardPage'
 
 import type { DashboardStats } from './api'
 
@@ -26,6 +28,10 @@ vi.mock('@/lib/socket/socketClient', () => ({
 
 vi.mock('@/config/env', () => ({
   env: { apiBaseUrl: 'http://localhost:8000/api', socketUrl: 'http://localhost:8000' },
+}))
+
+vi.mock('./hooks/useDashboardStats', () => ({
+  useDashboardStats: vi.fn(),
 }))
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -79,7 +85,7 @@ describe('LowStockList', () => {
     render(<LowStockList stats={stats} />)
     expect(screen.getByTestId('low-stock-item-p1')).toBeInTheDocument()
     expect(screen.getByTestId('low-stock-item-p2')).toBeInTheDocument()
-    expect(screen.getByTestId('low-stock-count-badge')).toHaveTextContent('2 products low on stock')
+    expect(screen.getByTestId('low-stock-count-badge')).toHaveTextContent('2 Issues')
   })
 
   it('shows "…and N more" when lowStockCount exceeds the capped list length', () => {
@@ -88,8 +94,8 @@ describe('LowStockList', () => {
       lowStockCount: 5,
     })
     render(<LowStockList stats={stats} />)
-    expect(screen.getByText(/…and 4 more/)).toBeInTheDocument()
-    expect(screen.getByTestId('low-stock-count-badge')).toHaveTextContent('5 products low on stock')
+    expect(screen.getByText(/\+4 more products running low/)).toBeInTheDocument()
+    expect(screen.getByTestId('low-stock-count-badge')).toHaveTextContent('5 Issues')
   })
 })
 
@@ -144,5 +150,50 @@ describe('useDashboardInvalidation', () => {
     })
 
     expect(spy).toHaveBeenCalledWith(expect.objectContaining({ queryKey: ['dashboard', 'stats'] }))
+  })
+})
+
+// ─── DashboardPage ────────────────────────────────────────────────────────────
+
+describe('DashboardPage', () => {
+  function wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={makeClient()}>{children}</QueryClientProvider>
+  }
+
+  it('renders the Dashboard heading', () => {
+    vi.mocked(useDashboardStats).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    render(<DashboardPage />, { wrapper })
+    expect(screen.getByRole('heading', { name: /dashboard/i })).toBeInTheDocument()
+  })
+
+  it('shows stat cards when data is loaded', () => {
+    vi.mocked(useDashboardStats).mockReturnValue({
+      data: stubStats(),
+      isLoading: false,
+      isError: false,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    render(<DashboardPage />, { wrapper })
+    expect(screen.getByTestId('stat-total-products')).toHaveTextContent('10')
+    expect(screen.getByTestId('stat-total-sales')).toHaveTextContent('5')
+  })
+
+  it('shows error message when the request fails', () => {
+    vi.mocked(useDashboardStats).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any)
+
+    render(<DashboardPage />, { wrapper })
+    expect(screen.getByText(/failed to load dashboard stats/i)).toBeInTheDocument()
   })
 })

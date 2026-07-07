@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -8,10 +8,12 @@ import { useProductList } from '@/features/products/hooks/useProductList'
 import { useStockUpdates } from '@/features/products/hooks/useStockUpdates'
 
 import { ProductSelector } from './components/ProductSelector'
+import { SaleHistoryTable } from './components/SaleHistoryTable'
 import { SaleLineItem } from './components/SaleLineItem'
 import CreateSalePage from './pages/CreateSalePage'
 
 import type { Product } from '@/types/product.types'
+import type { Sale, SoldBy } from '@/types/sale.types'
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -268,5 +270,106 @@ describe('CreateSalePage — duplicate handling', () => {
     const qtyInputs = screen.getAllByLabelText(/quantity for widget a/i)
     expect(qtyInputs).toHaveLength(1)
     expect(qtyInputs[0]).toHaveValue(2)
+  })
+})
+
+// ─── SaleLineItem: quantity input branches ────────────────────────────────────
+
+describe('SaleLineItem — quantity input', () => {
+  it('clamps quantity to available stock when typed value exceeds it', () => {
+    const product = stubProduct({ stockQuantity: 5 })
+    const onQuantityChange = vi.fn()
+    render(
+      <SaleLineItem
+        product={product}
+        quantity={1}
+        onQuantityChange={onQuantityChange}
+        onRemove={vi.fn()}
+      />,
+      { wrapper },
+    )
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: /quantity for widget a/i }), {
+      target: { value: '10' },
+    })
+
+    expect(onQuantityChange).toHaveBeenCalledWith(5)
+  })
+
+  it('ignores non-numeric input without calling onQuantityChange', () => {
+    const product = stubProduct({ stockQuantity: 10 })
+    const onQuantityChange = vi.fn()
+    render(
+      <SaleLineItem
+        product={product}
+        quantity={1}
+        onQuantityChange={onQuantityChange}
+        onRemove={vi.fn()}
+      />,
+      { wrapper },
+    )
+
+    fireEvent.change(screen.getByRole('spinbutton', { name: /quantity for widget a/i }), {
+      target: { value: 'abc' },
+    })
+
+    expect(onQuantityChange).not.toHaveBeenCalled()
+  })
+
+  it('shows "Only N left" warning when stock is between 1 and 4', () => {
+    const product = stubProduct({ stockQuantity: 3 })
+    render(
+      <SaleLineItem product={product} quantity={1} onQuantityChange={vi.fn()} onRemove={vi.fn()} />,
+      { wrapper },
+    )
+
+    expect(screen.getByText(/only 3 left/i)).toBeInTheDocument()
+  })
+
+  it('shows "Out of stock" when stockQuantity is 0', () => {
+    const product = stubProduct({ stockQuantity: 0 })
+    render(
+      <SaleLineItem product={product} quantity={1} onQuantityChange={vi.fn()} onRemove={vi.fn()} />,
+      { wrapper },
+    )
+
+    expect(screen.getByText(/out of stock/i)).toBeInTheDocument()
+  })
+})
+
+// ─── SaleHistoryTable ─────────────────────────────────────────────────────────
+
+const stubSale = (overrides: Partial<Sale> = {}): Sale => ({
+  _id: 's1',
+  items: [
+    {
+      product: 'p1',
+      productNameSnapshot: 'Widget A',
+      quantity: 2,
+      unitPriceSnapshot: 10,
+      subtotal: 20,
+    },
+  ],
+  grandTotal: 20,
+  soldBy: { _id: 'u1', name: 'Admin User', email: 'admin@test.dev' } satisfies SoldBy,
+  createdAt: '2024-01-15T10:30:00.000Z',
+  ...overrides,
+})
+
+describe('SaleHistoryTable', () => {
+  it('shows empty state when there are no sales', () => {
+    render(<SaleHistoryTable sales={[]} />, { wrapper })
+    expect(screen.getByText(/no sales recorded yet/i)).toBeInTheDocument()
+  })
+
+  it('renders a sale row with grand total and seller name when soldBy is an object', () => {
+    render(<SaleHistoryTable sales={[stubSale()]} />, { wrapper })
+    expect(screen.getByText('$20.00')).toBeInTheDocument()
+    expect(screen.getByText('Admin User')).toBeInTheDocument()
+  })
+
+  it('renders seller as a plain string when soldBy is not an object', () => {
+    render(<SaleHistoryTable sales={[stubSale({ soldBy: 'u-raw-id' })]} />, { wrapper })
+    expect(screen.getByText('u-raw-id')).toBeInTheDocument()
   })
 })

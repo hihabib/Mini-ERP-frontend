@@ -1,115 +1,104 @@
-# Mini ERP — Inventory & Sales Management Frontend
+# Mini-ERP Frontend
 
-A production-grade ERP frontend for inventory and sales management, built feature-by-feature with a modular architecture.
+This repository contains the frontend client for the Mini-ERP (Inventory & Sales Management System). It provides a responsive, role-based dashboard for managing products, generating sales, and viewing real-time analytics.
 
 ## Tech Stack
 
-| Concern         | Library                        |
-| --------------- | ------------------------------ |
-| Framework       | React 18 + Vite                |
-| Language        | TypeScript (strict)            |
-| Routing         | React Router v7                |
-| Styling         | Tailwind CSS + Shadcn/ui       |
-| Server state    | TanStack Query v5              |
-| Client/UI state | Redux Toolkit                  |
-| Real-time       | Socket.io-client               |
-| Unit tests      | Vitest + React Testing Library |
-| E2E tests       | Playwright                     |
-| Package manager | pnpm                           |
+- **Framework:** React 18 with Vite
+- **Language:** TypeScript
+- **Routing:** React Router v7
+- **Styling:** Tailwind CSS & Shadcn UI
+- **Server State Management:** TanStack Query (React Query)
+- **Client State Management:** Redux Toolkit (minimal usage, primarily for session/auth sync)
+- **Forms & Validation:** React Hook Form & Zod
+- **Real-Time Updates:** Socket.io-client
+- **Testing:** Vitest (Unit/Integration) & Playwright (E2E)
+- **Linting & Formatting:** ESLint & Prettier
 
 ## Prerequisites
 
-- Node.js 20+
-- pnpm 11+ (`npm i -g pnpm`)
+- Node.js (v18+)
+- `pnpm` package manager
+- **Running Backend API**: The frontend expects the backend server (and its MongoDB replica set) to be running. By default, it expects the API at `http://localhost:5000`.
 
-## Setup
+## Getting Started
 
-### 1. Install dependencies
+1. **Install dependencies:**
 
-```bash
-pnpm install
-```
+   ```bash
+   pnpm install
+   ```
 
-### 2. Configure environment variables
+2. **Configure Environment Variables:**
+   Copy `.env.example` to `.env` (or create one) and set your API URL:
 
-```bash
-cp .env.example .env
-```
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   ```
 
-Open `.env` and set:
+3. **Start the Development Server:**
+   ```bash
+   pnpm run dev
+   ```
 
-| Variable            | Description          | Example                     |
-| ------------------- | -------------------- | --------------------------- |
-| `VITE_API_BASE_URL` | REST API base URL    | `http://localhost:8000/api` |
-| `VITE_SOCKET_URL`   | Socket.io server URL | `http://localhost:8000`     |
+## Available Scripts
 
-### 3. Install Playwright browser binaries (first time only)
-
-```bash
-pnpm exec playwright install chromium
-```
-
-## Scripts
-
-| Command               | Description                                   |
-| --------------------- | --------------------------------------------- |
-| `pnpm run dev`        | Start Vite dev server (http://localhost:5173) |
-| `pnpm run build`      | Type-check and build for production           |
-| `pnpm run preview`    | Preview the production build locally          |
-| `pnpm test`           | Run Vitest component/unit tests               |
-| `pnpm run test:watch` | Run Vitest in watch mode                      |
-| `pnpm run test:e2e`   | Run Playwright E2E tests                      |
-| `pnpm run lint`       | Run ESLint across all TypeScript files        |
-| `pnpm run lint:fix`   | Run ESLint and auto-fix fixable issues        |
-| `pnpm run format`     | Format all files with Prettier                |
-| `pnpm run typecheck`  | Run TypeScript compiler check without emit    |
-
-## Git Hooks
-
-Husky hooks run automatically on git operations:
-
-- **pre-commit**: ESLint + Prettier on staged files (via lint-staged), then `tsc --noEmit`
-- **pre-push**: full `pnpm test` (component tests)
-
-E2E tests run in CI on every push (see `.github/workflows/ci.yml`).
+- `pnpm run dev`: Starts the Vite development server.
+- `pnpm run build`: Type-checks and builds the production bundle.
+- `pnpm run preview`: Previews the production build locally.
+- `pnpm run test`: Runs the Vitest unit & component test suite.
+- `pnpm run test:coverage`: Runs Vitest with coverage report generation.
+- `pnpm run test:e2e`: Runs the Playwright end-to-end tests.
+- `pnpm run lint`: Runs ESLint checks.
+- `pnpm run typecheck`: Runs TypeScript type checking.
 
 ## Project Structure
 
+The frontend follows a feature-driven architecture.
+
 ```
 src/
-├── config/
-│   └── env.ts                # Typed, validated env variables — import from here
-├── main.tsx                  # Entry point
-├── App.tsx                   # Router + providers
-├── routes/
-│   ├── router.tsx            # Route definitions
-│   └── ProtectedRoute.tsx    # Auth guard
-├── features/
-│   ├── auth/                 # Login, session, auth types
-│   ├── products/             # Product CRUD
-│   ├── sales/                # Sales management
-│   └── dashboard/            # Summary stats
-├── components/
-│   └── ui/                   # Shadcn primitives
-├── lib/
-│   ├── api/
-│   │   ├── axiosClient.ts    # Base Axios instance + interceptors
-│   │   └── queryClient.ts    # TanStack Query config
-│   └── socket/
-│       └── socketClient.ts   # Socket.io singleton
-├── store/
-│   ├── store.ts              # Redux store
-│   └── slices/               # Redux slices per feature
-└── types/                    # Shared TypeScript types
-tests/
-└── e2e/                      # Playwright specs
+├── components/       # Shared UI components (Shadcn components, layouts)
+├── features/         # Feature modules (auth, dashboard, products, sales)
+│   ├── auth/         # Login forms, session initializer, auth hooks
+│   ├── dashboard/    # Analytics views, stats, low stock lists
+│   ├── products/     # Product catalog, forms, and stock updates
+│   └── sales/        # POS interface, cart, sale history tables
+├── lib/              # Utilities, Axios instances, SocketProvider
+├── routes/           # React Router configuration and ProtectedRoutes
+├── store/            # Redux store (authSlice)
+└── tests/            # E2E Playwright tests and global setups
 ```
 
-## Architecture Notes
+## Roles & Permissions
 
-- **Feature-based modules** — each feature owns its components, hooks, API calls, and types.
-- **API layer isolation** — all HTTP calls go through `src/lib/api/axiosClient.ts`. Components never call Axios directly.
-- **Env isolation** — all `import.meta.env` reads go through `src/config/env.ts`. Other files never access `import.meta.env`.
-- **Server vs. client state** — TanStack Query owns fetched data; Redux owns purely UI state (modals, tabs, form steps).
-- **Single Socket connection** — initialized once via `socketClient.ts`; features subscribe through hooks.
-- **Centralized auth guard** — `ProtectedRoute` is the single place that checks authentication and redirects.
+The UI is strictly role-gated based on permissions retrieved from the backend:
+
+- **Admin**: Has full access. Can create/edit/delete products and view full sale history.
+- **Manager**: Can create/edit products but generally cannot delete them.
+- **Employee**: Can view products and create sales (POS), but cannot access the Sale History page or create new products.
+
+These permissions are checked dynamically via the `usePermission` hook, which conditionally renders UI elements like the "Add Product" button or specific navigation links.
+
+## Real-Time Architecture
+
+The application maintains a long-lived WebSocket connection to the backend via `Socket.io`.
+When a sale occurs anywhere in the system, a `stock:updated` event is broadcast. The frontend intercepts this in the `useStockUpdates` hook and instantly patches the local TanStack Query cache. This ensures that all connected clients see live inventory reductions without needing to manually refresh or poll the server.
+
+## Testing
+
+We enforce a strict Test-Driven Development (TDD) cycle. The frontend uses `msw` (or `axios-mock-adapter`) for mocking network requests in Vitest.
+Coverage thresholds are strictly enforced:
+
+- Statements: 70%
+- Branches: 65%
+- Functions: 70%
+- Lines: 70%
+
+Run `pnpm run test` or `pnpm run test:coverage` to execute unit tests.
+Run `pnpm run test:e2e` to execute Playwright integration flows.
+
+## Known Limitations
+
+- The current deployment assumes a single monolithic backend URL.
+- Sale History is restricted to users with the `sale:view` permission (typically Admins/Managers).

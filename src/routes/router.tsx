@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom'
 
+import { AppLayout } from '@/components/layout/AppLayout'
 import LoginPage from '@/features/auth/components/LoginPage'
 import DashboardPage from '@/features/dashboard/pages/DashboardPage'
 import CreateProductPage from '@/features/products/pages/CreateProductPage'
@@ -17,59 +18,66 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: (
-      <ProtectedRoute requiredPermission="dashboard:view">
-        <DashboardPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/dashboard',
-    element: (
-      <ProtectedRoute requiredPermission="dashboard:view">
-        <DashboardPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/products',
-    element: (
-      <ProtectedRoute requiredPermission="product:view">
-        <ProductListPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/products/new',
-    element: (
-      <ProtectedRoute requiredPermission="product:create">
-        <CreateProductPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/products/:id/edit',
-    element: (
-      <ProtectedRoute requiredPermission="product:update">
-        <EditProductPage />
-      </ProtectedRoute>
-    ),
-  },
-  {
-    path: '/sales',
+    // Base protection for all layout routes
     element: (
       <ProtectedRoute>
-        <CreateSalePage />
+        <AppLayout />
       </ProtectedRoute>
     ),
-  },
-  {
-    path: '/sales/history',
-    element: (
-      <ProtectedRoute requiredPermission="sale:view">
-        <SaleHistoryPage />
-      </ProtectedRoute>
-    ),
+    children: [
+      {
+        index: true,
+        element: (
+          <ProtectedRoute requiredPermission="dashboard:view">
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'dashboard',
+        element: (
+          <ProtectedRoute requiredPermission="dashboard:view">
+            <DashboardPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'products',
+        element: (
+          <ProtectedRoute requiredPermission="product:view">
+            <ProductListPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'products/new',
+        element: (
+          <ProtectedRoute requiredPermission="product:create">
+            <CreateProductPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'products/:id/edit',
+        element: (
+          <ProtectedRoute requiredPermission="product:update">
+            <EditProductPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'sales',
+        element: <CreateSalePage />, // Base ProtectedRoute already covers general auth
+      },
+      {
+        path: 'sales/history',
+        element: (
+          <ProtectedRoute requiredPermission="sale:view">
+            <SaleHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
+    ],
   },
 ])
 

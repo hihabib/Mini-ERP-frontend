@@ -1,0 +1,4 @@
+- generic [ref=e2]:
+  - main [ref=e16]:
+    - heading "Dashboard" [level=1] [ref=e17]
+  - region "Notifications alt+T"

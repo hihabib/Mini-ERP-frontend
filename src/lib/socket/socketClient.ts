@@ -17,10 +17,10 @@ export function getSocket(): Socket {
 export function connectSocket(token: string): void {
   const s = getSocket()
   s.auth = { token }
-  s.connect()
+  if (!s.connected) s.connect()
 }
 
 export function disconnectSocket(): void {
+  // Disconnect but keep the singleton so event listeners survive re-login
   socket?.disconnect()
-  socket = null
 }

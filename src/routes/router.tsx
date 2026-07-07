@@ -5,7 +5,8 @@ import DashboardPage from '@/features/dashboard/components/DashboardPage'
 import CreateProductPage from '@/features/products/pages/CreateProductPage'
 import EditProductPage from '@/features/products/pages/EditProductPage'
 import ProductListPage from '@/features/products/pages/ProductListPage'
-import SalesPage from '@/features/sales/components/SalesPage'
+import CreateSalePage from '@/features/sales/pages/CreateSalePage'
+import SaleHistoryPage from '@/features/sales/pages/SaleHistoryPage'
 
 import ProtectedRoute from './ProtectedRoute'
 
@@ -58,7 +59,15 @@ const router = createBrowserRouter([
     path: '/sales',
     element: (
       <ProtectedRoute>
-        <SalesPage />
+        <CreateSalePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/sales/history',
+    element: (
+      <ProtectedRoute requiredPermission="sale:view">
+        <SaleHistoryPage />
       </ProtectedRoute>
     ),
   },

@@ -1,0 +1,14 @@
+- generic [ref=f1e2]:
+  - main [ref=f1e3]:
+    - heading "Sale History" [level=1] [ref=f1e4]
+    - table [ref=f1e6]:
+      - rowgroup [ref=f1e7]:
+        - row "Date Items Grand Total Sold By" [ref=f1e8]:
+          - columnheader "Date" [ref=f1e9]
+          - columnheader "Items" [ref=f1e10]
+          - columnheader "Grand Total" [ref=f1e11]
+          - columnheader "Sold By" [ref=f1e12]
+      - rowgroup [ref=f1e13]:
+        - row "No sales recorded yet." [ref=f1e14]:
+          - cell "No sales recorded yet." [ref=f1e15]
+  - region "Notifications alt+T"

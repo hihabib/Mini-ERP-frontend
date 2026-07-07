@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom'
 import { Toaster } from '@/components/ui/sonner'
 import SessionInitializer from '@/features/auth/components/SessionInitializer'
 import queryClient from '@/lib/api/queryClient'
+import { SocketProvider } from '@/lib/socket/SocketProvider'
 import router from '@/routes/router'
 import { store } from '@/store/store'
 
@@ -12,9 +13,11 @@ export default function App() {
   return (
     <ReduxProvider store={store}>
       <QueryClientProvider client={queryClient}>
-        <SessionInitializer />
-        <RouterProvider router={router} />
-        <Toaster />
+        <SocketProvider>
+          <SessionInitializer />
+          <RouterProvider router={router} />
+          <Toaster />
+        </SocketProvider>
       </QueryClientProvider>
     </ReduxProvider>
   )

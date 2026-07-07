@@ -1,0 +1,17 @@
+- generic [ref=f4e2]:
+  - main [ref=f4e3]:
+    - heading "New Sale" [level=1] [ref=f4e4]
+    - generic [ref=f4e5]:
+      - generic [ref=f4e6]:
+        - generic [ref=f4e7]:
+          - img [ref=f4e8]
+          - textbox "Search products to add" [active] [ref=f4e11]:
+            - /placeholder: Search products to add…
+            - text: Widget
+        - list [ref=f4e13]:
+          - listitem [ref=f4e14]:
+            - 'button "Test WidgetTW-CURL-001 Stock: 50" [ref=f4e15] [cursor=pointer]':
+              - generic [ref=f4e16]: Test WidgetTW-CURL-001
+              - generic [ref=f4e18]: "Stock: 50"
+      - button "Complete Sale" [ref=f4e12] [cursor=pointer]
+  - region "Notifications alt+T"

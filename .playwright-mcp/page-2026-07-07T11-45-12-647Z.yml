@@ -1,0 +1,28 @@
+- generic [ref=f3e2]:
+  - main [ref=f3e3]:
+    - heading "Products" [level=1] [ref=f3e5]
+    - generic [ref=f3e7]:
+      - img [ref=f3e8]
+      - textbox "Search products" [ref=f3e11]:
+        - /placeholder: Search by name or SKU…
+    - table [ref=f3e13]:
+      - rowgroup [ref=f3e14]:
+        - row "Image Name SKU Category Purchase Selling Stock" [ref=f3e15]:
+          - columnheader "Image" [ref=f3e16]
+          - columnheader "Name" [ref=f3e17]
+          - columnheader "SKU" [ref=f3e18]
+          - columnheader "Category" [ref=f3e19]
+          - columnheader "Purchase" [ref=f3e20]
+          - columnheader "Selling" [ref=f3e21]
+          - columnheader "Stock" [ref=f3e22]
+      - rowgroup [ref=f3e23]:
+        - row "Test Widget Test Widget TW-CURL-001 electronics $15.00 $29.99 50" [ref=f3e24]:
+          - cell "Test Widget" [ref=f3e25]:
+            - img "Test Widget" [ref=f3e26]
+          - cell "Test Widget" [ref=f3e27]
+          - cell "TW-CURL-001" [ref=f3e28]
+          - cell "electronics" [ref=f3e29]
+          - cell "$15.00" [ref=f3e30]
+          - cell "$29.99" [ref=f3e31]
+          - cell "50" [ref=f3e32]
+  - region "Notifications alt+T"

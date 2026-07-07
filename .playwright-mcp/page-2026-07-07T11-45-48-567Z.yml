@@ -1,0 +1,32 @@
+- generic [ref=f4e2]:
+  - main [ref=f4e3]:
+    - heading "New Sale" [level=1] [ref=f4e4]
+    - generic [ref=f4e5]:
+      - generic [ref=f4e6]:
+        - generic [ref=f4e7]:
+          - img [ref=f4e8]
+          - textbox "Search products to add" [ref=f4e11]:
+            - /placeholder: Search products to add…
+            - text: Widget
+        - list [ref=f4e13]:
+          - listitem [ref=f4e14]:
+            - 'button "Test WidgetTW-CURL-001 Stock: 50 already in sale" [active] [ref=f4e19] [cursor=pointer]':
+              - generic [ref=f4e16]: Test WidgetTW-CURL-001
+              - generic [ref=f4e17]:
+                - generic [ref=f4e18]: "Stock: 50"
+                - generic "already in sale" [ref=f4e20]: +qty
+      - generic [ref=f4e22]:
+        - generic [ref=f4e23]:
+          - paragraph [ref=f4e24]: Test Widget
+          - paragraph [ref=f4e25]: TW-CURL-001 · $29.99 each
+        - generic [ref=f4e26]:
+          - generic [ref=f4e27]: Quantity for Test Widget
+          - spinbutton "Quantity for Test Widget" [ref=f4e28]: "1"
+          - generic [ref=f4e29]: $29.99
+        - button "Remove Test Widget" [ref=f4e30] [cursor=pointer]:
+          - img
+      - generic [ref=f4e32]:
+        - paragraph [ref=f4e33]: Estimated Total
+        - paragraph [ref=f4e34]: $29.99
+      - button "Complete Sale" [ref=f4e12] [cursor=pointer]
+  - region "Notifications alt+T"

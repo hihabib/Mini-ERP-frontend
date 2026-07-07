@@ -23,7 +23,7 @@ vi.mock('@/lib/socket/socketClient', () => ({
 
 // Mock env so tests don't need a real .env file
 vi.mock('@/config/env', () => ({
-  env: { apiBaseUrl: 'http://localhost:8000/api', socketUrl: 'http://localhost:8000' },
+  env: { apiBaseUrl: 'http://148.113.44.221:1500/api', socketUrl: 'http://148.113.44.221:1500' },
 }))
 
 // Mock permission hook if the component gates UI by role

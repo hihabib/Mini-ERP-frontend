@@ -2,7 +2,9 @@ import { createBrowserRouter } from 'react-router-dom'
 
 import LoginPage from '@/features/auth/components/LoginPage'
 import DashboardPage from '@/features/dashboard/components/DashboardPage'
-import ProductsPage from '@/features/products/components/ProductsPage'
+import CreateProductPage from '@/features/products/pages/CreateProductPage'
+import EditProductPage from '@/features/products/pages/EditProductPage'
+import ProductListPage from '@/features/products/pages/ProductListPage'
 import SalesPage from '@/features/sales/components/SalesPage'
 
 import ProtectedRoute from './ProtectedRoute'
@@ -31,8 +33,24 @@ const router = createBrowserRouter([
   {
     path: '/products',
     element: (
-      <ProtectedRoute>
-        <ProductsPage />
+      <ProtectedRoute requiredPermission="product:view">
+        <ProductListPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/products/new',
+    element: (
+      <ProtectedRoute requiredPermission="product:create">
+        <CreateProductPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: '/products/:id/edit',
+    element: (
+      <ProtectedRoute requiredPermission="product:update">
+        <EditProductPage />
       </ProtectedRoute>
     ),
   },

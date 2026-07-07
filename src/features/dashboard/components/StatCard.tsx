@@ -1,0 +1,16 @@
+interface StatCardProps {
+  label: string
+  value: string | number
+  testId?: string
+}
+
+export function StatCard({ label, value, testId }: StatCardProps) {
+  return (
+    <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <p className="text-sm text-muted-foreground">{label}</p>
+      <p className="mt-2 text-3xl font-bold" data-testid={testId}>
+        {value}
+      </p>
+    </div>
+  )
+}

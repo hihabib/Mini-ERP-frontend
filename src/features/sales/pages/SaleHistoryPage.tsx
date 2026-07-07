@@ -20,8 +20,8 @@ export default function SaleHistoryPage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="mb-6 text-2xl font-semibold">Sale History</h1>
+    <div className="flex flex-col h-full space-y-4">
+      <h1 className="text-xl font-bold tracking-tight">Sale History</h1>
 
       {isLoading && (
         <div className="flex justify-center py-16">
@@ -30,11 +30,13 @@ export default function SaleHistoryPage() {
       )}
 
       {isError && (
-        <p className="py-8 text-center text-destructive">Failed to load sales. Try refreshing.</p>
+        <p className="py-8 text-center text-destructive font-medium text-sm">
+          Failed to load sales. Try refreshing.
+        </p>
       )}
 
       {data && (
-        <>
+        <div className="flex-1 min-h-0 flex flex-col space-y-4">
           <SaleHistoryTable sales={data.sales} />
           <ProductPagination
             page={page}
@@ -42,8 +44,8 @@ export default function SaleHistoryPage() {
             total={data.meta.total}
             onPageChange={onPageChange}
           />
-        </>
+        </div>
       )}
-    </main>
+    </div>
   )
 }

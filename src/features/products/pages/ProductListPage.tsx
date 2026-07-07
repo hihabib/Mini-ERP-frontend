@@ -41,18 +41,18 @@ export default function ProductListPage() {
   })
 
   return (
-    <main className="p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Products</h1>
+    <div className="flex flex-col h-full space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold tracking-tight">Products</h1>
         {canCreate && (
-          <Button onClick={() => navigate('/products/new')}>
-            <Plus className="h-4 w-4" />
+          <Button onClick={() => navigate('/products/new')} size="sm">
+            <Plus className="mr-2 h-4 w-4" />
             Add Product
           </Button>
         )}
       </div>
 
-      <div className="mb-4">
+      <div>
         <ProductSearchBar value={search} onChange={(v) => setParam('search', v)} />
       </div>
 
@@ -63,13 +63,13 @@ export default function ProductListPage() {
       )}
 
       {isError && (
-        <p className="py-8 text-center text-destructive">
+        <p className="py-8 text-center text-destructive font-medium text-sm">
           Failed to load products. Try refreshing.
         </p>
       )}
 
       {data && (
-        <>
+        <div className="flex-1 min-h-0 flex flex-col space-y-4">
           <ProductTable products={data.products} />
           <ProductPagination
             page={page}
@@ -77,8 +77,8 @@ export default function ProductListPage() {
             total={data.meta.total}
             onPageChange={(p) => setParam('page', String(p))}
           />
-        </>
+        </div>
       )}
-    </main>
+    </div>
   )
 }

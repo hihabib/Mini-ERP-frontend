@@ -63,17 +63,31 @@ export default function CreateSalePage() {
   }
 
   return (
-    <main className="p-8">
-      <h1 className="mb-6 text-2xl font-semibold">New Sale</h1>
+    <main className="flex flex-col h-full">
+      <h1 className="mb-4 text-2xl font-semibold shrink-0">New Sale</h1>
 
-      <div className="max-w-2xl space-y-4">
-        <ProductSelector
-          selectedProductIds={items.map((i) => i.product._id)}
-          onSelect={handleSelect}
-        />
+      <div className="grid gap-4 lg:grid-cols-[1fr_350px] flex-1 min-h-0">
+        {/* Left Side: Product Selector */}
+        <div className="flex flex-col min-h-[500px] bg-card rounded-md border p-3 shadow-sm overflow-hidden">
+          <ProductSelector
+            selectedProductIds={items.map((i) => i.product._id)}
+            onSelect={handleSelect}
+          />
+        </div>
 
-        {items.length > 0 && (
-          <div className="space-y-2">
+        {/* Right Side: Cart */}
+        <div className="flex flex-col bg-card rounded-md border shadow-sm overflow-hidden">
+          <div className="p-3 border-b bg-muted/30">
+            <h2 className="font-semibold text-base">Current Order</h2>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 space-y-2 min-h-[300px]">
+            {items.length === 0 && (
+              <div className="h-full flex flex-col items-center justify-center text-muted-foreground opacity-60">
+                <p className="text-sm">No items added yet.</p>
+                <p className="text-xs text-center mt-1">Select products from the left.</p>
+              </div>
+            )}
             {items.map((item) => (
               <SaleLineItem
                 key={item.product._id}
@@ -84,19 +98,21 @@ export default function CreateSalePage() {
               />
             ))}
           </div>
-        )}
 
-        {items.length > 0 && <SaleSummary items={items} />}
+          <div className="p-3 border-t bg-muted/10 space-y-3 shrink-0">
+            {items.length > 0 && <SaleSummary items={items} />}
 
-        {validationError && (
-          <p role="alert" className="text-sm text-destructive">
-            {validationError}
-          </p>
-        )}
+            {validationError && (
+              <p role="alert" className="text-sm text-destructive font-medium">
+                {validationError}
+              </p>
+            )}
 
-        <Button onClick={handleSubmit} disabled={isPending} className="w-full">
-          {isPending ? 'Processing…' : 'Complete Sale'}
-        </Button>
+            <Button onClick={handleSubmit} disabled={isPending} className="w-full h-10 text-base">
+              {isPending ? 'Processing…' : 'Complete Sale'}
+            </Button>
+          </div>
+        </div>
       </div>
     </main>
   )

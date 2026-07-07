@@ -59,7 +59,13 @@ export function ProductTable({ products }: ProductTableProps) {
           {products.map((product) => {
             const isLowStock = product.stockQuantity < LOW_STOCK_THRESHOLD
             return (
-              <TableRow key={product._id} className={isLowStock ? 'bg-amber-50' : undefined}>
+              <TableRow
+                key={product._id}
+                className={`cursor-pointer hover:bg-muted/50 transition-colors ${
+                  isLowStock ? 'bg-amber-50 hover:bg-amber-100' : ''
+                }`}
+                onClick={() => canUpdate && navigate(`/products/${product._id}/edit`)}
+              >
                 <TableCell>
                   {product.imageUrl ? (
                     <img
@@ -93,7 +99,10 @@ export function ProductTable({ products }: ProductTableProps) {
                           variant="ghost"
                           size="icon"
                           aria-label={`Edit ${product.name}`}
-                          onClick={() => navigate(`/products/${product._id}/edit`)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            navigate(`/products/${product._id}/edit`)
+                          }}
                         >
                           <Pencil className="h-4 w-4" />
                         </Button>
@@ -103,7 +112,10 @@ export function ProductTable({ products }: ProductTableProps) {
                           variant="ghost"
                           size="icon"
                           aria-label={`Delete ${product.name}`}
-                          onClick={() => setToDelete(product)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setToDelete(product)
+                          }}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

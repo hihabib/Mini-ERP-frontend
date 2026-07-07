@@ -40,8 +40,8 @@ Open `.env` and set:
 
 | Variable            | Description          | Example                     |
 | ------------------- | -------------------- | --------------------------- |
-| `VITE_API_BASE_URL` | REST API base URL    | `http://localhost:5000/api` |
-| `VITE_SOCKET_URL`   | Socket.io server URL | `http://localhost:5000`     |
+| `VITE_API_BASE_URL` | REST API base URL    | `http://localhost:8000/api` |
+| `VITE_SOCKET_URL`   | Socket.io server URL | `http://localhost:8000`     |
 
 ### 3. Install Playwright browser binaries (first time only)
 

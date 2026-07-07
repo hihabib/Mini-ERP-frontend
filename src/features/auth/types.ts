@@ -3,13 +3,10 @@ export interface LoginCredentials {
   password: string
 }
 
-export interface AuthUser {
-  id: string
-  email: string
-  role: 'admin' | 'staff'
+export interface LoginResponse {
+  accessToken: string
 }
 
-export interface AuthResponse {
-  token: string
-  user: AuthUser
+export interface RefreshResponse {
+  accessToken: string
 }

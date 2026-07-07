@@ -1,4 +1,12 @@
-import { LayoutDashboard, Package, ShoppingCart, LogOut, UserCircle, Menu } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingCart,
+  LogOut,
+  UserCircle,
+  Menu,
+  Users,
+} from 'lucide-react'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
@@ -26,6 +34,7 @@ export function AppLayout() {
   const canViewDashboard = usePermission('dashboard:view')
   const canViewProducts = usePermission('product:view')
   const canViewSales = usePermission('sale:view')
+  const canViewUsers = usePermission('user:view')
 
   // We assume any authenticated user can create sales (POS).
   // Strictly, they need `sale:create`, but for navigation simplify it.
@@ -34,6 +43,7 @@ export function AppLayout() {
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, show: canViewDashboard },
     { name: 'Products', path: '/products', icon: Package, show: canViewProducts },
+    { name: 'Users', path: '/users', icon: Users, show: canViewUsers },
     {
       name: 'POS (Sell)',
       path: '/sales',

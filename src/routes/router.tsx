@@ -8,6 +8,7 @@ import EditProductPage from '@/features/products/pages/EditProductPage'
 import ProductListPage from '@/features/products/pages/ProductListPage'
 import CreateSalePage from '@/features/sales/pages/CreateSalePage'
 import SaleHistoryPage from '@/features/sales/pages/SaleHistoryPage'
+import { UsersPage } from '@/features/users/pages/UsersPage'
 
 import ProtectedRoute from './ProtectedRoute'
 
@@ -74,6 +75,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredPermission="sale:view">
             <SaleHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'users',
+        element: (
+          <ProtectedRoute requiredPermission="user:view">
+            <UsersPage />
           </ProtectedRoute>
         ),
       },

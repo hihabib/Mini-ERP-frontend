@@ -111,12 +111,13 @@ test.describe('Sales — Employee', () => {
     const searchInput = page.getByLabel(/search products/i)
     await searchInput.fill(TEST_SKU)
 
-    // Wait for search result (unique SKU → exactly one dropdown item)
-    await expect(page.locator('ul button').first()).toBeVisible({ timeout: 8_000 })
+    // Wait for search result
+    const resultRow = page.getByRole('row').filter({ hasText: TEST_SKU }).first()
+    await expect(resultRow).toBeVisible({ timeout: 8_000 })
 
     // Read the stock shown in the dropdown
     const stockText =
-      (await page
+      (await resultRow
         .getByTestId(/^product-stock-/)
         .first()
         .textContent()) ?? ''
@@ -124,7 +125,7 @@ test.describe('Sales — Employee', () => {
     expect(initialStock).toBe(30)
 
     // Add product (quantity = 1 by default)
-    await page.locator('ul button').first().click()
+    await resultRow.click()
 
     // Line item shows correct subtotal
     await expect(page.getByTestId(/^subtotal-/)).toHaveText('$10.00', { timeout: 5_000 })
@@ -134,7 +135,7 @@ test.describe('Sales — Employee', () => {
 
     // Success toast must show grand total from the server response
     await expect(page.getByText(/sale created/i)).toBeVisible({ timeout: 8_000 })
-    await expect(page.getByText(/\$10\.00/)).toBeVisible({ timeout: 5_000 })
+    await expect(page.getByText(/\$10\.00/).first()).toBeVisible({ timeout: 5_000 })
 
     // Form resets — items cleared
     await expect(page.getByTestId(/^subtotal-/)).not.toBeVisible({ timeout: 3_000 })

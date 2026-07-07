@@ -13,6 +13,12 @@ import { login } from '../api'
 
 import type { AppDispatch } from '@/store/store'
 
+const DEMO_ACCOUNTS = [
+  { label: 'Admin', email: 'admin@mini-erp.dev', password: 'Admin@1234!' },
+  { label: 'Manager', email: 'manager@mini-erp.dev', password: 'Manager@1234!' },
+  { label: 'Employee', email: 'employee@mini-erp.dev', password: 'Employee@1234!' },
+] as const
+
 interface FieldErrors {
   email?: string
   password?: string
@@ -117,6 +123,34 @@ export default function LoginForm() {
       <Button type="submit" disabled={isPending} className="w-full">
         {isPending ? 'Signing in…' : 'Sign in'}
       </Button>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">Demo accounts</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-2">
+        {DEMO_ACCOUNTS.map(({ label, email: demoEmail, password: demoPassword }) => (
+          <Button
+            key={label}
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setEmail(demoEmail)
+              setPassword(demoPassword)
+              setFieldErrors({})
+              setApiError(null)
+            }}
+          >
+            {label}
+          </Button>
+        ))}
+      </div>
     </form>
   )
 }

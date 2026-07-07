@@ -19,7 +19,7 @@
 
 ### 1. Feature-based modules
 
-Organize by business feature (`auth`, `products`, `sales`, `dashboard`), not by technical type. Each feature folder owns its own components, hooks, API calls, and types.
+Organize by business feature (`auth`, `products`, `sales`, `dashboard`, `users`), not by technical type. Each feature folder owns its own components, hooks, API calls, and types.
 
 ```
 src/features/<feature>/
@@ -41,6 +41,11 @@ src/features/<feature>/
 All HTTP calls go through `src/lib/api/axiosClient.ts`. **Components never call Axios or fetch directly.** The API layer is the only place that knows about endpoints, base URLs, and auth headers.
 
 Feature API files (`src/features/<feature>/api.ts`) call `axiosClient` and are the only callers of the HTTP layer from feature code.
+
+**Envelope unwrapping (critical gotcha):** `axiosClient` strips the `ApiSuccessResponse<T>` wrapper via a response interceptor — after it runs, `response.data` is the inner `T` and any pagination info lands on `response.meta`. Feature API functions must account for this:
+
+- For paginated endpoints, reconstruct the typed response manually: `{ data: response.data, meta: response.meta }` — do **not** destructure `{ data }` and return it directly, as that discards `meta` (see `getUsers`).
+- For flat-list endpoints (e.g. `/roles`), `response.data` is already `T[]` — return it directly; do **not** add an extra `.data` wrapper.
 
 ### 4. Environment variables
 
@@ -64,6 +69,13 @@ Build on Shadcn components in `src/components/ui/`. Do not duplicate one-off but
 - Use `overflow-x-auto` wrapped around `<Table>` components to prevent layout breaking.
 - Use `min-h-full` rather than strict `h-full` on `flex-col` containers so elements can stack vertically and scroll naturally instead of squishing on mobile devices.
 
+### 9. User Roles and UI Rendering
+
+- Render features conditionally based on the user's role (Admin, Manager, Employee).
+- The Admin role has full access, including User Management and Dashboard statistics.
+- The Manager role can manage products and process sales.
+- The Employee role can view products and process sales.
+
 ## Testing
 
 ### Test structure
@@ -75,6 +87,11 @@ Every component with logic needs:
 - A negative permission test (UI element is **absent** for an unauthorized role)
 - An error-path test for every mutation (API rejection shows correct UI)
 - A socket-state-change test for any real-time hook (proves the event changes cache/UI, not just that a handler was registered)
+
+### E2E test patterns
+
+- **Same-URL reload:** When a `test.beforeEach` already lands on page X and the test body needs a fresh load of page X with a route mock active, use `page.reload()` rather than `page.goto('/x')`. `goto` on the same URL can be treated as a no-op, leaving TanStack Query's cache (populated by `beforeEach`) intact and bypassing the mock.
+- **Swapping route mocks mid-test:** Use `page.unroute(pattern)` followed by a new `page.route(pattern, handler)` rather than a call-count counter. Counter-based mocks are brittle if two fetches fire concurrently.
 
 ### Coverage thresholds (enforced by CI via `pnpm test:coverage`)
 

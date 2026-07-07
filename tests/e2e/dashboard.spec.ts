@@ -120,31 +120,26 @@ test.describe('Dashboard — Admin', () => {
   })
 
   test('stats refresh after a sale — dashboard auto-refetches on navigation', async ({ page }) => {
-    // First call returns initial counts; subsequent calls return post-sale counts.
-    // This proves the dashboard refetches when navigated to (TanStack Query staleTime = 0)
-    // and that the socket invalidation path (useDashboardInvalidation) wires correctly.
-    let statsCallCount = 0
+    // Prove the dashboard refetches when navigated to (TanStack Query staleTime = 0).
+    // beforeEach already loaded /dashboard with real API values; page.reload() forces
+    // a fresh load with the route mock active, avoiding a same-URL no-op issue.
 
-    await page.route('**/api/dashboard/stats', async (route) => {
-      statsCallCount++
-      const totalSales = statsCallCount === 1 ? 5 : 6
-      const totalRevenue = statsCallCount === 1 ? 500.0 : 510.0
-
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify({
-          success: true,
-          data: {
-            totalProducts: 10,
-            totalSales,
-            totalRevenue,
-            lowStockProducts: [],
-            lowStockCount: 0,
-          },
-        }),
+    const statsBody = (totalSales: number, totalRevenue: number) =>
+      JSON.stringify({
+        success: true,
+        data: {
+          totalProducts: 10,
+          totalSales,
+          totalRevenue,
+          lowStockProducts: [],
+          lowStockCount: 0,
+        },
       })
-    })
+
+    // Step 1: register pre-sale stats mock, then reload to activate it
+    await page.route('**/api/dashboard/stats', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: statsBody(5, 500.0) }),
+    )
 
     // Mock POST /sales — local MongoDB lacks replica set for transactions
     await page.route('**/api/sales', async (route) => {
@@ -177,8 +172,9 @@ test.describe('Dashboard — Admin', () => {
       }
     })
 
-    // Step 1: load dashboard — initial stats (totalSales = 5)
-    await page.goto('/dashboard')
+    // page.reload() forces a full browser reload of the current /dashboard page,
+    // clearing TanStack Query cache so the fresh fetch hits the mock above.
+    await page.reload()
     await expect(page.getByTestId('stat-total-sales')).toHaveText('5', { timeout: 8_000 })
     await expect(page.getByTestId('stat-total-revenue')).toHaveText('$500.00')
 
@@ -186,13 +182,18 @@ test.describe('Dashboard — Admin', () => {
     await page.goto('/sales')
     const searchInput = page.getByLabel(/search products/i)
     await searchInput.fill(TEST_SKU)
-    await expect(page.locator('ul button').first()).toBeVisible({ timeout: 8_000 })
-    await page.locator('ul button').first().click()
+    const resultRow = page.getByRole('row').filter({ hasText: TEST_SKU }).first()
+    await expect(resultRow).toBeVisible({ timeout: 8_000 })
+    await resultRow.click()
     await page.getByRole('button', { name: /complete sale/i }).click()
     await expect(page.getByText(/sale created/i)).toBeVisible({ timeout: 8_000 })
 
-    // Step 3: navigate back to dashboard — TanStack Query refetches stale data
-    // The mock now returns totalSales = 6, proving the stats updated
+    // Step 3: swap mock to post-sale values, navigate back — TanStack Query refetches stale data
+    await page.unroute('**/api/dashboard/stats')
+    await page.route('**/api/dashboard/stats', (route) =>
+      route.fulfill({ status: 200, contentType: 'application/json', body: statsBody(6, 510.0) }),
+    )
+
     await page.goto('/dashboard')
     await expect(page.getByTestId('stat-total-sales')).toHaveText('6', { timeout: 8_000 })
     await expect(page.getByTestId('stat-total-revenue')).toHaveText('$510.00')
